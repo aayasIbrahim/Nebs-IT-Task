@@ -16,7 +16,7 @@ export const createNotice = async (req, res) => {
     const noticeData = { ...req.body };
 
     // ২. গুরুত্বপূর্ণ: noticeType যদি স্ট্রিং হিসেবে আসে তবে সেটাকে অ্যারেতে কনভার্ট করা
-    if (noticeData.noticeType && typeof noticeData.noticeType === "string") {
+    if (noticeData.noticeType && typeof noticeData.noticeType  === "string") {
       try {
         noticeData.noticeType = JSON.parse(noticeData.noticeType);
       } catch (e) {
@@ -50,12 +50,34 @@ export const getAllNotices = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-
     const skip = (page - 1) * limit;
 
-    const { status } = req.query;
-    const filter = status ? { status } : {};
+    // ১. কুয়েরি থেকে ফিল্টার প্যারামিটারগুলো নিন
+    const { status, targetDept, search } = req.query;
+    
+    // ২. ডাইনামিক ফিল্টার অবজেক্ট তৈরি করুন
+    let filter = {};
 
+    // স্ট্যাটাস ফিল্টার
+    if (status) {
+      filter.status = status;
+    }
+
+    // ডিপার্টমেন্ট ফিল্টার
+    if (targetDept && targetDept !== "All Department") {
+      // decodeURIComponent নিশ্চিত করবে যে %20 আবার স্পেস হয়ে গেছে
+      const decodedDept = decodeURIComponent(targetDept);
+      
+      // হুবহু ডাটাবেসের নামের সাথে মিলানোর জন্য (Case Insesitive সহ)
+      filter.targetDept = { $regex: `^${decodedDept}$`, $options: "i" };
+    }
+
+   
+    if (search) {
+      filter.noticeTitle = { $regex: search, $options: "i" };
+    }
+
+    // ৩. ডাটাবেস থেকে ডাটা নিয়ে আসা
     const totalNotices = await Notice.countDocuments(filter);
     const notices = await Notice.find(filter)
       .sort({ createdAt: -1 }) 

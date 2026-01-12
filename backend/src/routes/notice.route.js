@@ -21,6 +21,11 @@ const noticeValidation = [
     .withMessage("Notice title is required")
     .isLength({ min: 5 })
     .withMessage("Title must be 5+ chars"),
+    body("noticeDescription")
+    .notEmpty()
+    .withMessage("Description  is required")
+    .isLength({ min: 5 })
+    .withMessage("Description must be 5+ chars"),
   body("targetDept").notEmpty().withMessage("Target department is required"),
   body("noticeType")
     .isArray({ min: 1 })
