@@ -6,7 +6,7 @@ const noticeSchema = new mongoose.Schema(
       type: String,
       required: [true, "Notice title is required"],
       trim: true,
-      minlength: [5, "Title must be at least 5 characters long"]
+      minlength: [5, "Title must be at least 5 characters long"],
     },
 
     targetDept: {
@@ -18,11 +18,11 @@ const noticeSchema = new mongoose.Schema(
     noticeType: {
       type: [String],
       validate: {
-        validator: function(v) {
+        validator: function (v) {
           return v && v.length > 0;
         },
-        message: "At least one notice type must be selected"
-      }
+        message: "At least one notice type must be selected",
+      },
     },
 
     employeeId: { type: String, default: null },
@@ -32,6 +32,10 @@ const noticeSchema = new mongoose.Schema(
     publishDate: {
       type: String,
       required: [true, "Publish date is required"],
+    },
+    noticeDescription: {
+      type: String,
+      required: [true, "Notice description is required"],
     },
 
     attachment: {
@@ -43,7 +47,7 @@ const noticeSchema = new mongoose.Schema(
       type: String,
       enum: {
         values: ["Published", "Draft", "Unpublished"],
-        message: "{VALUE} is not a valid status"
+        message: "{VALUE} is not a valid status",
       },
       default: "Draft",
     },

@@ -18,7 +18,6 @@ export default function NoticeTable({
   const [notices, setNotices] = useState<Notice[]>(initialNotices);
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-
   useEffect(() => {
     setNotices(initialNotices);
   }, [initialNotices]);
@@ -30,33 +29,30 @@ export default function NoticeTable({
   };
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
-  setOpenToggleId(null);
-  setLoadingId(id);
+    setOpenToggleId(null);
+    setLoadingId(id);
 
-  try {
-    const result = await updateNoticeStatusOnly(id, currentStatus);
+    try {
+      const result = await updateNoticeStatusOnly(id, currentStatus);
 
-    if (result?.success) {
-  
-      const updatedStatus = result.status as Notice["status"];
+      if (result?.success) {
+        const updatedStatus = result.status as Notice["status"];
 
-      setNotices((prev) =>
-        prev.map((n) =>
-          n._id === id
-            ? ({ ...n, status: updatedStatus } as Notice)
-            : n
-        )
-      );
-    } else {
-      alert(result?.error || "Status update failed!");
+        setNotices((prev) =>
+          prev.map((n) =>
+            n._id === id ? ({ ...n, status: updatedStatus } as Notice) : n
+          )
+        );
+      } else {
+        alert(result?.error || "Status update failed!");
+      }
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoadingId(null);
     }
-  } catch (error) {
-    console.error("Failed to update status:", error);
-    alert("Something went wrong. Please try again.");
-  } finally {
-    setLoadingId(null);
-  }
-};
+  };
 
   return (
     <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm overflow-visible font-sans">
@@ -75,17 +71,28 @@ export default function NoticeTable({
                     )
                   }
                   checked={
-                    notices.length > 0 &&
-                    selectedIds.length === notices.length
+                    notices.length > 0 && selectedIds.length === notices.length
                   }
                 />
               </th>
-              <th className="p-4 font-semibold uppercase tracking-wider">Title</th>
-              <th className="p-4 font-semibold uppercase tracking-wider">Notice Type</th>
-              <th className="p-4 font-semibold uppercase tracking-wider">Departments</th>
-              <th className="p-4 font-semibold uppercase tracking-wider">Date</th>
-              <th className="p-4 font-semibold uppercase tracking-wider">Status</th>
-              <th className="p-4 font-semibold uppercase tracking-wider">Actions</th>
+              <th className="p-4 font-semibold uppercase tracking-wider">
+                Title
+              </th>
+              <th className="p-4 font-semibold uppercase tracking-wider">
+                Notice Type
+              </th>
+              <th className="p-4 font-semibold uppercase tracking-wider">
+                Departments
+              </th>
+              <th className="p-4 font-semibold uppercase tracking-wider">
+                Date
+              </th>
+              <th className="p-4 font-semibold uppercase tracking-wider">
+                Status
+              </th>
+              <th className="p-4 font-semibold uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -93,7 +100,9 @@ export default function NoticeTable({
               <tr
                 key={notice._id}
                 className={`group hover:bg-slate-50 transition-colors text-sm text-gray-700 ${
-                  loadingId === notice._id ? "opacity-50 pointer-events-none" : ""
+                  loadingId === notice._id
+                    ? "opacity-50 pointer-events-none"
+                    : ""
                 }`}
               >
                 <td className="p-4 text-center">
@@ -134,12 +143,14 @@ export default function NoticeTable({
                   {openToggleId === notice._id && (
                     <StatusTogglePopup
                       notice={notice}
-                      onToggle={() => handleStatusToggle(notice._id, notice.status)}
+                      onToggle={() =>
+                        handleStatusToggle(notice._id, notice.status)
+                      }
                     />
                   )}
                 </td>
                 <td className="p-4">
-                  <ActionButtons />
+                  <ActionButtons id={notice._id} />
                 </td>
               </tr>
             ))}
@@ -168,7 +179,7 @@ export default function NoticeTable({
                   {notice.noticeTitle}
                 </h3>
               </div>
-              <ActionButtons />
+              <ActionButtons id={notice._id} />
             </div>
 
             <div className="grid grid-cols-2 gap-y-2 text-[13px] ml-8">
@@ -197,7 +208,9 @@ export default function NoticeTable({
                 {openToggleId === notice._id && (
                   <StatusTogglePopup
                     notice={notice}
-                    onToggle={() => handleStatusToggle(notice._id, notice.status)}
+                    onToggle={() =>
+                      handleStatusToggle(notice._id, notice.status)
+                    }
                     isMobile
                   />
                 )}

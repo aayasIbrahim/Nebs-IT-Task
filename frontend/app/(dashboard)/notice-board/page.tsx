@@ -3,7 +3,7 @@ import NoticeHeader from "@/components/NoticeHeader";
 import { Notice } from "@/app/types/notice";
 
 interface FilterParams {
-  dept?: string;
+  targetDept?: string;
   search?: string;
   status?: string;
 }
@@ -11,14 +11,17 @@ interface FilterParams {
 async function getNotices(params: FilterParams = {}) {
   const query = new URLSearchParams();
   
-  // আপনার ব্যাকএন্ডের ফিল্ড নেম অনুযায়ী কিউরি সেট করুন
-  if (params.dept) query.append("targetDept", params.dept);
+  
+  if (params.targetDept && params.targetDept !== "All Department") {
+    query.append("targetDept", params.targetDept);
+  }
+  
   if (params.search) query.append("search", params.search);
   if (params.status) query.append("status", params.status);
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notices?${query.toString()}`, {
-      next: { tags: ["notices-list"] },
+      next: { tags: ["notice-board"] },
       cache: "no-store",
     });
 
