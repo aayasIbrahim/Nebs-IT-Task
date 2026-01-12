@@ -74,7 +74,7 @@ export default function CreateNotice() {
     window.location.reload();
   };
   return (
-    <div className="bg-[#F8FAFC] min-h-screen p-4 md:p-8">
+    <div className="bg-[#F8FAFC] min-h-screen p-4 ">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-100">
         {/* --- Header Section --- */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">

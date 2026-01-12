@@ -1,14 +1,15 @@
 import { validationResult } from "express-validator";
 import Notice from "../../models/Notice.js";
 
-// 1. Create Notice (with Validation & Draft support)
 export const createNotice = async (req, res) => {
   // ১. Validation Check
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      errors: errors.array().map((err) => ({ field: err.path, message: err.msg })),
+      errors: errors
+        .array()
+        .map((err) => ({ field: err.path, message: err.msg })),
     });
   }
 
@@ -16,7 +17,7 @@ export const createNotice = async (req, res) => {
     const noticeData = { ...req.body };
 
     // ২. গুরুত্বপূর্ণ: noticeType যদি স্ট্রিং হিসেবে আসে তবে সেটাকে অ্যারেতে কনভার্ট করা
-    if (noticeData.noticeType && typeof noticeData.noticeType  === "string") {
+    if (noticeData.noticeType && typeof noticeData.noticeType === "string") {
       try {
         noticeData.noticeType = JSON.parse(noticeData.noticeType);
       } catch (e) {
@@ -35,7 +36,9 @@ export const createNotice = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: `Notice ${notice.status === "Draft" ? "saved as Draft" : "Published"} successfully!`,
+      message: `Notice ${
+        notice.status === "Draft" ? "saved as Draft" : "Published"
+      } successfully!`,
       data: notice,
     });
   } catch (error) {
@@ -44,43 +47,51 @@ export const createNotice = async (req, res) => {
   }
 };
 
-// 2. Get All Notices (Active vs Draft filtering included)
-
 export const getAllNotices = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // ১. কুয়েরি থেকে ফিল্টার প্যারামিটারগুলো নিন
-    const { status, targetDept, search } = req.query;
-    
-    // ২. ডাইনামিক ফিল্টার অবজেক্ট তৈরি করুন
+    // ১. নতুন প্যারামিটারগুলো ডিকনস্ট্রাক্ট করা
+    const { status, targetDept, search, employee, date } = req.query;
+
     let filter = {};
 
-    // স্ট্যাটাস ফিল্টার
+    // ২. স্ট্যাটাস ফিল্টার
     if (status) {
       filter.status = status;
     }
 
-    // ডিপার্টমেন্ট ফিল্টার
+    // ৩. ডিপার্টমেন্ট ফিল্টার
     if (targetDept && targetDept !== "All Department") {
-      // decodeURIComponent নিশ্চিত করবে যে %20 আবার স্পেস হয়ে গেছে
       const decodedDept = decodeURIComponent(targetDept);
-      
-      // হুবহু ডাটাবেসের নামের সাথে মিলানোর জন্য (Case Insesitive সহ)
       filter.targetDept = { $regex: `^${decodedDept}$`, $options: "i" };
     }
 
-   
+    // ৪. টাইটেল সার্চ (যদি প্রয়োজন হয়)
     if (search) {
       filter.noticeTitle = { $regex: search, $options: "i" };
     }
 
-    // ৩. ডাটাবেস থেকে ডাটা নিয়ে আসা
+    // ৫. Employee Name অথবা ID সার্চ (নতুন)
+    if (employee) {
+      filter.$or = [
+        { employeeName: { $regex: employee, $options: "i" } },
+        { employeeId: { $regex: employee, $options: "i" } },
+      ];
+    }
+
+    // ৬. পাবলিশ ডেট ফিল্টার (নতুন)
+  if (date) {
+ 
+  filter.publishDate = date; 
+}
+
+    // ৭. ডাটাবেস কোয়েরি এক্সিকিউট করা
     const totalNotices = await Notice.countDocuments(filter);
     const notices = await Notice.find(filter)
-      .sort({ createdAt: -1 }) 
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
@@ -134,18 +145,16 @@ export const updateNotice = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Notice not found" });
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Notice updated successfully",
-        data: updatedNotice,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Notice updated successfully",
+      data: updatedNotice,
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
- 
+
 export const updateNoticeStatusOnly = async (req, res) => {
   try {
     const { status } = req.body;
@@ -154,8 +163,9 @@ export const updateNoticeStatusOnly = async (req, res) => {
       { status },
       { new: true }
     );
-    
-    if (!updatedNotice) return res.status(404).json({ success: false, message: "Not found" });
+
+    if (!updatedNotice)
+      return res.status(404).json({ success: false, message: "Not found" });
 
     res.status(200).json({ success: true, data: updatedNotice });
   } catch (error) {

@@ -9,8 +9,8 @@ export default async function Page({
   searchParams: Promise<NoticeSearchParams> 
 }) {
   return (
-    <div className="p-4">
-      {/* এখানে searchParams পাস করা জরুরি */}
+    <div className="">
+
       <NotieBorad searchParams={searchParams} />
     </div>
   );

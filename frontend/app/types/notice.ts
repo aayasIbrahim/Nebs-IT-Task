@@ -15,5 +15,7 @@ export interface Notice {
   targetDept: string;
   publishDate: string;
   status: NoticeStatus;
+  employeeId: string;
+  employeeName: string;
   noticeDescription?: string;
 }
