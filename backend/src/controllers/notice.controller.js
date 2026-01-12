@@ -8,18 +8,26 @@ export const createNotice = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      errors: errors
-        .array()
-        .map((err) => ({ field: err.path, message: err.msg })),
+      errors: errors.array().map((err) => ({ field: err.path, message: err.msg })),
     });
   }
 
   try {
     const noticeData = { ...req.body };
 
-    // ২. Cloudinary File Implementation
+    // ২. গুরুত্বপূর্ণ: noticeType যদি স্ট্রিং হিসেবে আসে তবে সেটাকে অ্যারেতে কনভার্ট করা
+    if (noticeData.noticeType && typeof noticeData.noticeType === "string") {
+      try {
+        noticeData.noticeType = JSON.parse(noticeData.noticeType);
+      } catch (e) {
+        // যদি JSON না হয়, তবে সেটাকে একটি অ্যারের ভেতর ঢুকিয়ে দিন
+        noticeData.noticeType = [noticeData.noticeType];
+      }
+    }
+
+    // ৩. Cloudinary URL Implementation
     if (req.file) {
-      noticeData.attachment = req.file.path; // Cloudinary URL
+      noticeData.attachment = req.file.path; // Multer-Cloudinary path
     }
 
     const notice = new Notice(noticeData);
@@ -27,12 +35,11 @@ export const createNotice = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: `Notice ${
-        notice.status === "Draft" ? "saved as Draft" : "Published"
-      } successfully!`,
+      message: `Notice ${notice.status === "Draft" ? "saved as Draft" : "Published"} successfully!`,
       data: notice,
     });
   } catch (error) {
+    console.error("Save Error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
@@ -112,6 +119,23 @@ export const updateNotice = async (req, res) => {
         message: "Notice updated successfully",
         data: updatedNotice,
       });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+ 
+export const updateNoticeStatusOnly = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const updatedNotice = await Notice.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    
+    if (!updatedNotice) return res.status(404).json({ success: false, message: "Not found" });
+
+    res.status(200).json({ success: true, data: updatedNotice });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

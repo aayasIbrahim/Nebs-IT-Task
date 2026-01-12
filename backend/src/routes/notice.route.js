@@ -1,6 +1,9 @@
 import express from "express";
 import { body } from "express-validator";
+import multer from 'multer';
+const upload = multer()
 const router = express.Router();
+
 
 import {
   createNotice,
@@ -8,6 +11,7 @@ import {
   getSingleNotice,
   updateNotice,
   deleteNotice,
+  updateNoticeStatusOnly
 } from "../controllers/notice.controller.js";
 
 // Validation Rules Middleware
@@ -31,16 +35,18 @@ const noticeValidation = [
 // --- Routes ---
 
 // Create a notice
-router.post("/", noticeValidation, createNotice);
+router.post("/",upload.single("attachment"), noticeValidation, createNotice);
 
 // Get all notices (Supports query: ?status=Published)
 router.get("/", getAllNotices);
 
 // View single notice
 router.get("/:id", getSingleNotice);
+// এটি মূল আপডেট রাউটের উপরে দিন যাতে ভ্যালিডেশন ঝামেলা না করে
+router.patch("/:id/status", updateNoticeStatusOnly);
 
 // Update notice (Publish/Unpublish/Content)
-router.put("/:id", noticeValidation, updateNotice);
+router.put("/:id",upload.single("attachment"), noticeValidation, updateNotice);
 
 // Delete notice
 router.delete("/:id", deleteNotice);

@@ -1,14 +1,17 @@
 import React from "react";
-import InteractiveNoticeTable from "@/components/NoticeTable";
-import NoticeHeader from "@/components/NoticeHeader";
 
-function page() {
+import NotieBorad from "./notice-board/page";
+import { NoticeSearchParams } from "../types/notice";
+
+export default async function Page({ 
+  searchParams 
+}: { 
+  searchParams: Promise<NoticeSearchParams> 
+}) {
   return (
-    <>
-      <NoticeHeader />
-      <InteractiveNoticeTable />
-    </>
+    <div className="p-4">
+      {/* এখানে searchParams পাস করা জরুরি */}
+      <NotieBorad searchParams={searchParams} />
+    </div>
   );
 }
-
-export default page;
