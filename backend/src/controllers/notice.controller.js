@@ -53,26 +53,21 @@ export const getAllNotices = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // ১. নতুন প্যারামিটারগুলো ডিকনস্ট্রাক্ট করা
     const { status, targetDept, search, employee, date } = req.query;
 
     let filter = {};
 
-    // ২. স্ট্যাটাস ফিল্টার
+  
     if (status) {
       filter.status = status;
     }
 
-    // ৩. ডিপার্টমেন্ট ফিল্টার
     if (targetDept && targetDept !== "All Department") {
       const decodedDept = decodeURIComponent(targetDept);
       filter.targetDept = { $regex: `^${decodedDept}$`, $options: "i" };
     }
 
-    // ৪. টাইটেল সার্চ (যদি প্রয়োজন হয়)
-    if (search) {
-      filter.noticeTitle = { $regex: search, $options: "i" };
-    }
+    
 
     // ৫. Employee Name অথবা ID সার্চ (নতুন)
     if (employee) {

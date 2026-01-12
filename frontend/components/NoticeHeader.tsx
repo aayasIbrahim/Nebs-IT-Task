@@ -84,14 +84,14 @@ const NoticeHeader = ({ activeCount, draftCount }: NoticeHeaderProps) => {
         </span>
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-          {/* Dept */}
-          <div className="relative flex-1 md:min-w-[200px]">
+          {/* Department Filter */}
+          <div className="relative flex-1 md:min-w-[180px]">
             <select
               className="w-full appearance-none bg-[#F1F5F9] border border-transparent py-2.5 pl-4 pr-10 rounded-lg text-[#64748B] text-sm focus:bg-white focus:ring-2 focus:ring-blue-100 outline-none transition-all cursor-pointer font-medium"
               value={searchParams.get("targetDept") || ""}
               onChange={(e) => handleFilterChange("targetDept", e.target.value)}
             >
-              <option value="">Departments</option>
+              <option value="">All Departments</option>
               <option value="Individual">Individual</option>
               <option value="IT Support">IT Support</option>
               <option value="Web Team">Web Team</option>
@@ -106,7 +106,7 @@ const NoticeHeader = ({ activeCount, draftCount }: NoticeHeaderProps) => {
             />
           </div>
 
-          {/* Employee */}
+          {/* Employee Search */}
           <div className="flex-1 md:min-w-[180px]">
             <input
               type="text"
@@ -114,7 +114,7 @@ const NoticeHeader = ({ activeCount, draftCount }: NoticeHeaderProps) => {
               className="w-full bg-[#F1F5F9] border border-transparent py-2.5 px-4 rounded-lg text-[#64748B] text-sm focus:bg-white focus:ring-2 focus:ring-blue-100 outline-none transition-all font-medium"
               key={searchParams.get("employee") || "empty"}
               defaultValue={searchParams.get("employee") || ""}
-              onBlur={(e) => handleFilterChange("employee", e.target.value)} // onBlur বা Enter এ চেঞ্জ হবে
+              onBlur={(e) => handleFilterChange("employee", e.target.value)}
               onKeyDown={(e) =>
                 e.key === "Enter" &&
                 handleFilterChange(
@@ -125,18 +125,34 @@ const NoticeHeader = ({ activeCount, draftCount }: NoticeHeaderProps) => {
             />
           </div>
 
-          {/* Date */}
-          <div className="relative flex-1 md:min-w-[160px]">
+          {/* Date Picker */}
+          <div className="relative flex-1 md:min-w-[150px]">
             <input
               type="date"
               className="w-full bg-[#F1F5F9] border border-transparent py-2.5 pl-4 pr-10 rounded-lg text-[#64748B] text-sm focus:bg-white focus:ring-2 focus:ring-blue-100 outline-none transition-all cursor-pointer font-medium"
               value={searchParams.get("date") || ""}
               onChange={(e) => handleFilterChange("date", e.target.value)}
             />
-            {/* <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none" /> */}
+          </div>
+          {/* Status Filter (নতুন যুক্ত করা হয়েছে) */}
+          <div className="relative flex-1 md:min-w-[140px]">
+            <select
+              className="w-full appearance-none bg-[#F1F5F9] border border-transparent py-2.5 pl-4 pr-10 rounded-lg text-[#64748B] text-sm focus:bg-white focus:ring-2 focus:ring-blue-100 outline-none transition-all cursor-pointer font-medium"
+              value={searchParams.get("status") || ""}
+              onChange={(e) => handleFilterChange("status", e.target.value)}
+            >
+              <option value="">All Status</option>
+              <option value="Published">Published</option>
+              <option value="Unpublished">Unpublished</option>
+              <option value="Draft">Draft</option>
+            </select>
+            <ChevronDown
+              size={16}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none"
+            />
           </div>
 
-          {/* Reset */}
+          {/* Reset Button */}
           <button
             onClick={resetFilters}
             disabled={!isFiltered}

@@ -13,30 +13,43 @@ interface FilterParams {
 async function getNotices(params: FilterParams = {}) {
   const query = new URLSearchParams();
 
+  // ১. ডিপার্টমেন্ট ফিল্টার
   if (params.targetDept && params.targetDept !== "All Department") {
     query.append("targetDept", params.targetDept);
   }
 
-  if (params.status) query.append("status", params.status);
+  // ২. স্ট্যাটাস ফিল্টার (Published/Draft/Unpublished)
+  if (params.status) {
+    query.append("status", params.status);
+  }
 
-  if (params.employee) query.append("employee", params.employee);
+  // ৩. এমপ্লয়ি ফিল্টার (Name বা ID)
+  if (params.employee) {
+    query.append("employee", params.employee);
+  }
 
-  if (params.date) query.append("date", params.date);
-  console.log("Fetching notices with params:", params);
+  // ৪. ডেট ফিল্টার
+  if (params.date) {
+    query.append("date", params.date);
+  }
 
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/notices?${query.toString()}`,
       {
         next: { tags: ["notice-board"] },
-        cache: "no-store",
+        cache: "no-store", // ডাটা সব সময় লেটেস্ট রাখার জন্য
       }
     );
 
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.error("Fetch failed with status:", res.status);
+      return [];
+    }
+
     const result = await res.json();
 
-    // এপিআই রেসপন্স চেক করা
+    // এপিআই রেসপন্স থেকে ডাটা রিটার্ন করা
     return result.data || [];
   } catch (error) {
     console.error("Fetch Error:", error);
