@@ -52,7 +52,7 @@ export default async function NoticeDetailsPage({
         </Link>
         
         <Link 
-          href={`/notice-board/edit/${notice._id}`}
+          href={`/notices/edit/${notice._id}`}
           className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-xl text-slate-700 hover:bg-slate-50 transition-all shadow-sm text-sm font-semibold"
         >
           <Pencil size={16} />
