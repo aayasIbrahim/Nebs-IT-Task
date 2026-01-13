@@ -30,16 +30,25 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   const [activeItem, setActiveItem] = useState("Employee");
 
   const navItems = [
-    { icon: <LayoutGrid size={20} />, label: "Dashboard" },
+    { icon: <LayoutGrid size={20} />, label: "Dashboard", href: "/" },
     {
       icon: <UserCircle size={20} />,
       label: "Employee",
       hasSubmenu: true,
       submenu: [
-        "Employee Database",
-        "Add New Employee",
-        "Performance Report",
-        "Performance History",
+        { label: "Employee Database", href: "/employee/database" },
+        { label: "Add New Employee", href: "/employee/add" },
+        { label: "Performance Report", href: "/employee/report" },
+        { label: "Performance History", href: "/employee/history" },
+      ],
+    },
+    {
+      icon: <ClipboardList size={20} />,
+      label: "Notice Board",
+      hasSubmenu: true,
+      submenu: [
+        { label: "Add Notice", href: "/addNotice" },
+        { label: "Notice Management", href: "/notice-board" },
       ],
     },
     { icon: <Box size={20} />, label: "Payroll", href: "/payroll" },
@@ -52,7 +61,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       hasSubmenu: true,
     },
     { icon: <FileText size={20} />, label: "Document manager" },
-    { icon: <ClipboardList size={20} />, label: "Notice Board",href:"/addNotice" },
+
     { icon: <ScrollText size={20} />, label: "Activity Log" },
     { icon: <LogOut size={20} />, label: "Exit Interview" },
     { icon: <User size={20} />, label: "Profile" },
@@ -86,7 +95,12 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold tracking-tight text-slate-900">
               {/* <img src="/Logo.png" alt="Logo" /> */}
-              <Image src={"/Logo.png"} alt="Logo" width={150} height={27.55555534362793} />
+              <Image
+                src={"/Logo.png"}
+                alt="Logo"
+                width={150}
+                height={27.55555534362793}
+              />
             </span>
           </div>
           <button
@@ -140,24 +154,31 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                 </Link>
 
                 {/* Submenu Logic */}
-                {item.label === "Employee" &&
-                  isEmployeeOpen &&
+                {item.hasSubmenu &&
+                  (item.label === "Employee"
+                    ? isEmployeeOpen
+                    : activeItem === item.label) &&
                   item.submenu && (
                     <div className="bg-slate-50/50 mt-1 rounded-xl">
-                      {item.submenu.map((subItem, subIndex) => (
-                        <button
-                          key={subIndex}
-                          onClick={() => setActiveItem(subItem)} // সাবমেনু ক্লিক করলেও একটিভ হবে
-                          className={`w-full text-left pl-14 pr-4 py-2.5 text-[14px] font-medium transition-colors
-                          ${
-                            activeItem === subItem
-                              ? "text-[#FF5722]"
-                              : "text-slate-500 hover:text-slate-800"
-                          }`}
-                        >
-                          {subItem}
-                        </button>
-                      ))}
+                      {item.submenu.map((subItem, subIndex) => {
+                        const isSubActive = activeItem === subItem.label;
+
+                        return (
+                          <Link
+                            key={subIndex}
+                            href={subItem.href}
+                            onClick={() => setActiveItem(subItem.label)}
+                            className={`w-full flex items-center pl-14 pr-4 py-2.5 text-[14px] font-medium transition-colors
+            ${
+              isSubActive
+                ? "text-[#FF5722]"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   )}
               </div>

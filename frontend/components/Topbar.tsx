@@ -1,18 +1,8 @@
 "use client";
 import { Bell, Menu } from "lucide-react";
 import Image from "next/image";
-const today = new Date().toLocaleDateString("en-GB", {
-  day: "2-digit",
-  month: "long",
-  year: "numeric",
-});
-const getGreeting = () => {
-  const hour = new Date().getHours();
+import { today, getGreeting } from "@/app/utils/Helper";
 
-  if (hour < 12) return "Good Morning";
-  if (hour < 18) return "Good Afternoon";
-  return "Good Evening";
-};
 export default function TopHeader({
   onMenuClick,
 }: {
