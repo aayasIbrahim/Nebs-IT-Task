@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Calendar, Tag, Briefcase } from "lucide-react";
-import ActionButtons from "./notice/ActionButton";
-import StatusBadge from "./notice/StatusBadge";
-import StatusTogglePopup from "./notice/StatusTogglePopup";
+import ActionButtons from "@/components/notice/ActionButton";
+import StatusBadge from "@/components/notice/StatusBadge";
+import StatusTogglePopup from "@/components/notice/StatusTogglePopup";
 import { updateNoticeStatusOnly } from "@/app/action/noticeAction";
 import { Notice } from "@/app/types/notice";
 

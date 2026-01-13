@@ -1,59 +1,50 @@
-import NoticeTable from "@/components/NoticeTable";
-import NoticeHeader from "@/components/NoticeHeader";
+import NoticeTable from "@/components/notice/NoticeTable";
+import NoticeHeader from "@/components/notice/NoticeHeader";
 import { Notice } from "@/app/types/notice";
+import NoticePagination from "@/components/notice/NoricePagination"; 
 
 interface FilterParams {
   targetDept?: string;
-
   status?: string;
   employee?: string;
   date?: string;
+  page?: string; 
 }
 
 async function getNotices(params: FilterParams = {}) {
   const query = new URLSearchParams();
 
-  // ১. ডিপার্টমেন্ট ফিল্টার
   if (params.targetDept && params.targetDept !== "All Department") {
     query.append("targetDept", params.targetDept);
   }
-
-  // ২. স্ট্যাটাস ফিল্টার (Published/Draft/Unpublished)
-  if (params.status) {
-    query.append("status", params.status);
-  }
-
-  // ৩. এমপ্লয়ি ফিল্টার (Name বা ID)
-  if (params.employee) {
-    query.append("employee", params.employee);
-  }
-
-  // ৪. ডেট ফিল্টার
-  if (params.date) {
-    query.append("date", params.date);
-  }
+  if (params.status) query.append("status", params.status);
+  if (params.employee) query.append("employee", params.employee);
+  if (params.date) query.append("date", params.date);
+  
+  query.append("page", params.page || "1");
+  query.append("limit", "5"); 
 
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/notices?${query.toString()}`,
       {
         next: { tags: ["notice-board"] },
-        cache: "no-store", // ডাটা সব সময় লেটেস্ট রাখার জন্য
+        cache: "no-store",
       }
     );
 
-    if (!res.ok) {
-      console.error("Fetch failed with status:", res.status);
-      return [];
-    }
+    if (!res.ok) return { data: [], pagination: { totalPages: 1, currentPage: 1 } };
 
     const result = await res.json();
-
-    // এপিআই রেসপন্স থেকে ডাটা রিটার্ন করা
-    return result.data || [];
+    
+    
+    return {
+      data: result.data || [],
+      pagination: result.pagination || { totalPages: 1, currentPage: 1 }
+    };
   } catch (error) {
     console.error("Fetch Error:", error);
-    return [];
+    return { data: [], pagination: { totalPages: 1, currentPage: 1 } };
   }
 }
 
@@ -63,17 +54,28 @@ export default async function NoticeBoard({
   searchParams: Promise<FilterParams>;
 }) {
   const params = await searchParams;
-  const notices: Notice[] = await getNotices(params);
+  
+  
+  const { data: notices, pagination } = await getNotices(params);
 
-  const activeCount = notices.filter((n) => n.status === "Published").length;
-  const draftCount = notices.filter((n) => n.status === "Draft").length;
+  
+  const activeCount = notices.filter((n: Notice) => n.status === "Published").length;
+  const draftCount = notices.filter((n: Notice) => n.status === "Draft").length;
 
   return (
     <div className="space-y-0 max-w-7xl mx-auto p-4 md:p-10">
       <NoticeHeader activeCount={activeCount} draftCount={draftCount} />
 
-      <div className="border-x border-b border-gray-100 rounded-b-xl overflow-hidden shadow-sm">
+      <div className="border border-gray-100 rounded-b-xl overflow-hidden shadow-sm bg-white">
         <NoticeTable initialNotices={notices} />
+        
+
+        <div className="border-t border-gray-50">
+           <NoticePagination
+            totalPages={pagination.totalPages}
+            currentPage={pagination.currentPage}
+          />
+        </div>
       </div>
     </div>
   );
