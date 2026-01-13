@@ -36,12 +36,12 @@ const NoticeHeader = ({ activeCount, draftCount }: NoticeHeaderProps) => {
   return (
     <div className="w-full bg-[#F8F9FB] p-6 rounded-xl border border-gray-100 font-sans shadow-sm">
       {/* Top Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <h1 className="text-[#333E52] text-2xl font-bold mb-1">
+          <h1 className="text-[#333E52] text-xl md:text-2xl font-bold mb-1 text-center sm:text-left">
             Notice Management
           </h1>
-          <div className="flex items-center gap-2 text-sm font-semibold">
+          <div className="flex items-flex items-center justify-center sm:justify-start gap-2 text-[12px] md:text-sm font-semibold gap-2 text-sm font-semibold">
             <span className="text-[#10B981]">
               Active Notices: {activeCount}
             </span>
@@ -52,7 +52,7 @@ const NoticeHeader = ({ activeCount, draftCount }: NoticeHeaderProps) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 justify-center">
           <Link
             href="/addNotice"
             className="flex items-center gap-2 bg-[#FF5722] hover:bg-[#E64A19] text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-md active:scale-95"
@@ -78,12 +78,12 @@ const NoticeHeader = ({ activeCount, draftCount }: NoticeHeaderProps) => {
       </div>
 
       {/* Filter Section */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-end gap-4">
+      <div className=" space-y-4">
         <span className="text-[#475569] font-bold text-sm shrink-0">
           Filter by:
         </span>
 
-        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+        <div className="grid grid-cols-2 lg:flex lg:flex-row items-center gap-3">
           {/* Department Filter */}
           <div className="relative flex-1 md:min-w-[180px]">
             <select

@@ -123,7 +123,7 @@ export async function updateNoticeAction(id: string, formData: FormData) {
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error("Server Error:", errorText);
+      console.error("Server Errorss:", errorText);
       return { success: false, error: "Server update failed" };
     }
 
