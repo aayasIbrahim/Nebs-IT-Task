@@ -33,21 +33,21 @@ export default function EditNoticeForm({ notice }: { notice: Notice }) {
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     
-    
+    // noticeType অ্যাড করা (অ্যারে হিসেবে)
     formData.delete("noticeType");
     noticeTypes.forEach(type => formData.append("noticeType", type));
 
     const result = await updateNoticeAction(notice._id, formData);
-    console.log("Update Result:", result);
 
     if (result.success) {
-      router.push(`/notices/${notice._id}`);
+      
+      router.push(`/notices/${notice._id}`); 
       router.refresh();
     } else {
-      alert(result.error || "Update failed");
+      alert(result.error);
       setLoading(false);
     }
-  }
+}
 
   return (
     <form action={handleSubmit} className="space-y-8 max-w-5xl mx-auto pb-20">

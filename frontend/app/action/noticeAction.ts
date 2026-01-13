@@ -94,29 +94,48 @@ export async function updateNoticeStatusOnly(
     console.error("Action Error details:", error);
     return { success: false, error: "Database connection failed" };
   }
-}
+};
 
 export async function updateNoticeAction(id: string, formData: FormData) {
   try {
     
+    const data = {
+      noticeTitle: formData.get("noticeTitle"),
+      noticeDescription: formData.get("noticeDescription"),
+      targetDept: formData.get("targetDept"),
+      employeeId: formData.get("employeeId"),
+      employeeName: formData.get("employeeName"),
+      position: formData.get("position"),
+      publishDate: formData.get("publishDate"),
+      status: formData.get("status"),
+      noticeType: formData.getAll("noticeType"), 
+    };
+
     const res = await fetch(`https://nebs-it-task.onrender.com/api/notices/${id}`, {
       method: "PUT",
-      // FormData পাঠালে "Content-Type" হেডার দেওয়ার দরকার নেই, ব্রাউজার নিজে থেকেই তা করে নেয়
-      body: formData, 
+      headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(data), 
     });
 
-    const result = await res.json();
-
-    if (res.ok) {
-      revalidatePath("/notice-board");
-      revalidatePath(`/notice-board/${id}`);
-      return { success: true };
-    }
     
-    return { success: false, error: result.message || "Update failed on server" };
+    if (!res.ok) {
+        // যদি এরর হয়, টেক্সট হিসেবে এরর মেসেজ পড়ার চেষ্টা করুন
+        const errorText = await res.text();
+        console.error("Server Error:", errorText);
+        return { success: false, error: "Server update failed" };
+    }
+
+
+
+    revalidatePath("/notice-board");
+    revalidatePath(`/notices/${id}`);
+    return { success: true };
+    
   } catch (error) {
     console.error("Update Action Error:", error);
-    return { success: false, error: "Network connection error" };
+    return { success: false, error: "Connection error" };
   }
 }
 
