@@ -28,8 +28,6 @@ export default async function EditNoticePage({
         <h1 className="text-2xl font-bold text-gray-900">Edit Notice</h1>
         <p className="text-gray-500 text-sm">Update the information below to modify the notice.</p>
       </div>
-
-      {/* এডিট ফর্ম কম্পোনেন্ট */}
       <EditNoticeForm notice={notice} />
     </div>
   );

@@ -18,4 +18,5 @@ export interface Notice {
   employeeId: string;
   employeeName: string;
   noticeDescription?: string;
+  attachmentUrl?: string;
 }

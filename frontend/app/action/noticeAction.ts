@@ -95,27 +95,28 @@ export async function updateNoticeStatusOnly(
     return { success: false, error: "Database connection failed" };
   }
 }
-export async function updateNoticeAction(id: string, formData: FormData) {
-  const data = {
-    noticeTitle: formData.get("noticeTitle"),
-    noticeDescription: formData.get("noticeDescription"),
-    targetDept: formData.get("targetDept"),
-  };
 
+export async function updateNoticeAction(id: string, formData: FormData) {
   try {
+    // নোট: আমরা এখানে JSON.stringify করছি না, কারণ ফর্মে ফাইল থাকতে পারে
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      // FormData পাঠালে "Content-Type" হেডার দেওয়ার দরকার নেই, ব্রাউজার নিজে থেকেই তা করে নেয়
+      body: formData, 
     });
+
+    const result = await res.json();
 
     if (res.ok) {
       revalidatePath("/notice-board");
+      revalidatePath(`/notice-board/${id}`);
       return { success: true };
     }
-    return { success: false, error: "Failed to update" };
-  } catch  {
-    return { success: false, error: "Connection error" };
+    
+    return { success: false, error: result.message || "Update failed on server" };
+  } catch (error) {
+    console.error("Update Action Error:", error);
+    return { success: false, error: "Network connection error" };
   }
 }
 
