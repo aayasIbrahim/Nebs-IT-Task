@@ -1,6 +1,8 @@
-import { redirect } from "next/navigation";
-
 export default function Home() {
-    
-  redirect("/notice-board");
+  return (
+    <div>
+      <h1>Hello Vercel!</h1>
+      <a href="/notice-board">Go to Notice Board</a>
+    </div>
+  )
 }
