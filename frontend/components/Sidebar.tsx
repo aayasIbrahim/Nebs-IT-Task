@@ -30,7 +30,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   const [activeItem, setActiveItem] = useState("Employee");
 
  const navItems = [
-  { icon: <LayoutGrid size={20} />, label: "Dashboard", href: "/" },
+  { icon: <LayoutGrid size={20} />, label: "Dashboard", href: "/dashbord" },
   {
     icon: <UserCircle size={20} />,
     label: "Employee",
