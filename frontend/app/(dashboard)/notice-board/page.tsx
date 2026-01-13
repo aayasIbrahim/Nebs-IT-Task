@@ -1,15 +1,9 @@
 import NoticeTable from "@/components/notice/NoticeTable";
 import NoticeHeader from "@/components/notice/NoticeHeader";
-import { Notice } from "@/app/types/notice";
+import { FilterParams } from "@/app/types/notice";
 import NoticePagination from "@/components/notice/NoricePagination"; 
 
-interface FilterParams {
-  targetDept?: string;
-  status?: string;
-  employee?: string;
-  date?: string;
-  page?: string; 
-}
+
 
 async function getNotices(params: FilterParams = {}) {
   const query = new URLSearchParams();
@@ -40,7 +34,8 @@ async function getNotices(params: FilterParams = {}) {
     
     return {
       data: result.data || [],
-      pagination: result.pagination || { totalPages: 1, currentPage: 1 }
+      pagination: result.pagination || { totalPages: 1, currentPage: 1 },
+      stats: result.stats || { published: 0, draft: 0 }
     };
   } catch (error) {
     console.error("Fetch Error:", error);
@@ -54,17 +49,11 @@ export default async function NoticeBoard({
   searchParams: Promise<FilterParams>;
 }) {
   const params = await searchParams;
-  
-  
-  const { data: notices, pagination } = await getNotices(params);
-
-  
-  const activeCount = notices.filter((n: Notice) => n.status === "Published").length;
-  const draftCount = notices.filter((n: Notice) => n.status === "Draft").length;
+  const { data: notices, pagination, stats } = await getNotices(params);
 
   return (
     <div className="space-y-0 max-w-7xl mx-auto p-4 md:p-10">
-      <NoticeHeader activeCount={activeCount} draftCount={draftCount} />
+      <NoticeHeader activeCount={stats.published} draftCount={stats.draft} />
 
       <div className="border border-gray-100 rounded-b-xl overflow-hidden shadow-sm bg-white">
         <NoticeTable initialNotices={notices} />

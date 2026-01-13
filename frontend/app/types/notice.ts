@@ -1,10 +1,9 @@
-// types/notice.ts (optional but recommended)
 export interface NoticeSearchParams {
   dept?: string;
   search?: string;
   status?: "Published" | "Draft";
 }
-// types/notice.ts
+
 export type NoticeStatus = "Published" | "Draft";
 
 export interface Notice {
@@ -26,3 +25,10 @@ export type ActionState = {
   _id?: string;
   title?: string;
 } | null;
+export interface FilterParams {
+  targetDept?: string;
+  status?: string;
+  employee?: string;
+  date?: string;
+  page?: string;
+}

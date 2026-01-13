@@ -19,7 +19,7 @@ const NoticePagination = ({ totalPages, currentPage }: PaginationProps) => {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  // পেজ নাম্বার জেনারেট করা (যেমন: ১ ২ ৩ ৪ ৫)
+  
   const renderPageNumbers = () => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {

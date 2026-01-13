@@ -57,7 +57,6 @@ export const getAllNotices = async (req, res) => {
 
     let filter = {};
 
-  
     if (status) {
       filter.status = status;
     }
@@ -66,8 +65,6 @@ export const getAllNotices = async (req, res) => {
       const decodedDept = decodeURIComponent(targetDept);
       filter.targetDept = { $regex: `^${decodedDept}$`, $options: "i" };
     }
-
-    
 
     // ৫. Employee Name অথবা ID সার্চ (নতুন)
     if (employee) {
@@ -78,10 +75,21 @@ export const getAllNotices = async (req, res) => {
     }
 
     // ৬. পাবলিশ ডেট ফিল্টার (নতুন)
-  if (date) {
- 
-  filter.publishDate = date; 
-}
+    if (date) {
+      filter.publishDate = date;
+    }
+    const stats = await Notice.aggregate([
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+    const formattedStats = {
+      published: stats.find((s) => s._id === "Published")?.count || 0,
+      draft: stats.find((s) => s._id === "Draft")?.count || 0,
+    };
 
     // ৭. ডাটাবেস কোয়েরি এক্সিকিউট করা
     const totalNotices = await Notice.countDocuments(filter);
@@ -92,6 +100,7 @@ export const getAllNotices = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      stats: formattedStats,
       count: notices.length,
       pagination: {
         totalData: totalNotices,
