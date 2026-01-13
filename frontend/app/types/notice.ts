@@ -20,3 +20,9 @@ export interface Notice {
   noticeDescription?: string;
   attachmentUrl?: string;
 }
+export type ActionState = {
+  success: boolean;
+  message: string;
+  _id?: string;
+  title?: string;
+} | null;

@@ -1,6 +1,7 @@
 "use client";
 import { createNotice } from "@/app/action/noticeAction";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useActionState} from "react";
+import { ActionState } from "@/app/types/notice";
 import SuccessModal from "@/components/notice/SuccessModel";
 import {
   ChevronLeft,
@@ -10,22 +11,22 @@ import {
   ChevronDown,
   UploadCloud,
 } from "lucide-react";
+import { FormButtons } from "@/components/FromButton";
 
 export default function CreateNotice() {
   const [noticeTypeOpen, setNoticeTypeOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>("");
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [createdNoticeData, setCreatedNoticeData] = useState({
-    id: "",
-    title: "",
-  });
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-  interface ActionResponse {
-    success: boolean;
-    _id?: string;
-    message?: string;
-  }
+  const formRef = useRef<HTMLFormElement>(null);
+
+
+  const [state, formAction] = useActionState<ActionState, FormData>(
+    createNotice,
+    null
+  );
+
   const noticeOptions = [
     "Warning / Disciplinary",
     "Performance Improvement",
@@ -47,36 +48,20 @@ export default function CreateNotice() {
       setFileName(e.target.files[0].name);
     }
   };
-  const handleSubmit = async (formData: FormData) => {
-    try {
-      const result = (await createNotice(
-        formData
-      )) as unknown as ActionResponse;
 
-      if (result && result.success) {
-        setCreatedNoticeData({
-          id: result._id || "",
 
-          title: (formData.get("noticeTitle") as string) || "Notice Published",
-        });
 
-        setShowSuccess(true);
-      } else {
-        alert(result?.message || "Failed to create notice. Please try again.");
-      }
-    } catch (error) {
-      console.error("Submission Error:", error);
-      alert("An unexpected error occurred while connecting to the server.");
-    }
-  };
   const resetForm = () => {
-    setShowSuccess(false);
+    formRef.current?.reset();
+    setSelectedTypes([]);
+    setFileName("");
+   
     window.location.reload();
   };
+
   return (
     <div className="bg-[#F8FAFC] min-h-screen p-4 ">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-100">
-        {/* --- Header Section --- */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
@@ -91,15 +76,12 @@ export default function CreateNotice() {
           </div>
         </div>
 
-        {/* --- Form Body --- */}
-        {/* Note: Server action works with FormData */}
-        <form action={handleSubmit} className="p-8">
+        <form action={formAction} ref={formRef} className="p-8">
           <p className="text-sm font-bold text-slate-400 mb-8 uppercase tracking-wider">
             Please fill in the details below
           </p>
 
           <div className="space-y-8">
-            {/* Hidden Inputs for Custom States */}
             <input
               type="hidden"
               name="noticeTypes"
@@ -115,15 +97,12 @@ export default function CreateNotice() {
               <div className="relative">
                 <select
                   name="targetDept"
-                  required // ভ্যালিডেশন নিশ্চিত করতে
+                  required
                   className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none appearance-none cursor-pointer"
                 >
                   <option value="">Select Department</option>
-
-                  {/* ভ্যালু এবং টেক্সট ঠিক করা হয়েছে */}
                   <option value="All Department">Global / Common</option>
                   <option value="Individual">Individual</option>
-
                   <option value="IT Support">IT Support</option>
                   <option value="Web Team">Web Team</option>
                   <option value="Finance">Finance</option>
@@ -152,12 +131,11 @@ export default function CreateNotice() {
               />
             </div>
 
-            {/* 3. Triple Grid (ID, Name, Position) */}
+            {/* 3. Grid Fields */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-[12px] font-bold text-slate-700 uppercase block">
-                  <span className="text-red-500 mr-1">*</span> Select Employee
-                  ID
+                  Employee ID
                 </label>
                 <input
                   name="employeeId"
@@ -165,37 +143,33 @@ export default function CreateNotice() {
                   className="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm outline-none"
                 />
               </div>
-
               <div className="space-y-2">
                 <label className="text-[12px] font-bold text-slate-700 uppercase block">
-                  <span className="text-red-500 mr-1">*</span> Employee Name
+                  Employee Name
                 </label>
                 <input
-                  type="text"
                   name="employeeName"
                   placeholder="Full Name"
                   className="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm outline-none"
                 />
               </div>
-
               <div className="space-y-2">
                 <label className="text-[12px] font-bold text-slate-700 uppercase block">
-                  <span className="text-red-500 mr-1">*</span> Position
+                  Position
                 </label>
                 <input
                   name="position"
-                  type="text"
                   placeholder="e.g. UI/UX Designer"
                   className="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm outline-none"
                 />
               </div>
             </div>
 
-            {/* 4. Notice Type & Date */}
+            {/* 4. Notice Type Multi-select */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
               <div className="space-y-2">
                 <label className="text-[12px] font-bold text-slate-700 uppercase block">
-                  <span className="text-red-500 mr-1">*</span> Notice Type
+                  Notice Type
                 </label>
                 <div
                   onClick={() => setNoticeTypeOpen(!noticeTypeOpen)}
@@ -215,17 +189,16 @@ export default function CreateNotice() {
                 </div>
 
                 {noticeTypeOpen && (
-                  <div className="absolute left-0 top-[75px] w-full bg-white border border-slate-100 rounded-2xl shadow-2xl z-50 p-3 flex flex-col">
-                    {/* অপশন লিস্ট */}
+                  <div className="absolute left-0 top-[75px] w-full bg-white border border-slate-100 rounded-2xl shadow-2xl z-50 p-3">
                     <div className="space-y-1 max-h-[250px] overflow-y-auto">
                       {noticeOptions.map((opt) => (
                         <div
                           key={opt}
                           onClick={() => handleToggleType(opt)}
-                          className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl cursor-pointer group"
+                          className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl cursor-pointer"
                         >
                           <div
-                            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                            className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
                               selectedTypes.includes(opt)
                                 ? "bg-[#FF5722] border-[#FF5722]"
                                 : "border-slate-200"
@@ -244,16 +217,15 @@ export default function CreateNotice() {
                         </div>
                       ))}
                     </div>
-
-                    {/* Cancel/Clear All Section */}
                     {selectedTypes.length > 0 && (
                       <div className="mt-2 pt-2 border-t border-slate-100">
                         <button
+                          type="button"
                           onClick={(e) => {
-                            e.stopPropagation(); // ড্রপডাউন ক্লোজ হওয়া বন্ধ করবে
-                            setSelectedTypes([]); // স্টেট ক্লিয়ার করার ফাংশন
+                            e.stopPropagation();
+                            setSelectedTypes([]);
                           }}
-                          className="w-full py-2.5 text-sm font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-center gap-2"
+                          className="w-full py-2.5 text-sm font-bold text-rose-500 hover:bg-rose-50 rounded-xl flex items-center justify-center gap-2"
                         >
                           <X size={16} /> Clear Selection
                         </button>
@@ -265,17 +237,17 @@ export default function CreateNotice() {
 
               <div className="space-y-2">
                 <label className="text-[12px] font-bold text-slate-700 uppercase block">
-                  <span className="text-red-500 mr-1">*</span> Publish Date
+                  Publish Date
                 </label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    name="publishDate"
-                    className="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm outline-none text-slate-600"
-                  />
-                </div>
+                <input
+                  type="date"
+                  name="publishDate"
+                  className="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm outline-none text-slate-600"
+                />
               </div>
             </div>
+
+            {/* 5. Description */}
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-700">
                 Notice Description
@@ -284,16 +256,13 @@ export default function CreateNotice() {
                 name="noticeDescription"
                 rows={5}
                 placeholder="Write the detailed notice content here..."
-                className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none text-sm text-gray-600"
+                className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-600"
                 required
-              ></textarea>
+              />
             </div>
 
-            {/* 5. Upload Box */}
+            {/* 6. File Upload */}
             <div className="mt-8">
-              <h3 className="text-sm font-bold text-slate-700 mb-3 uppercase text-[12px]">
-                Upload Attachment
-              </h3>
               <input
                 type="file"
                 name="attachment"
@@ -315,15 +284,11 @@ export default function CreateNotice() {
                   </span>{" "}
                   or drag and drop.
                 </p>
-                <p className="text-[10px] text-slate-400 mt-1 uppercase">
-                  JPG, PNG or PDF (Max 5MB)
-                </p>
               </div>
             </div>
 
-            {/* 6. Selected File Show */}
             {fileName && (
-              <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 w-fit animate-in fade-in zoom-in duration-200">
+              <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 w-fit">
                 <Paperclip size={16} className="text-slate-400" />
                 <span className="text-xs font-bold text-slate-600">
                   {fileName}
@@ -338,41 +303,29 @@ export default function CreateNotice() {
               </div>
             )}
           </div>
+          {state?.success === false && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-600 animate-in fade-in slide-in-from-top-2">
+              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                <X size={18} className="text-red-600" />
+              </div>
+              <div className="flex flex-col">
+                <p className="text-xs font-bold uppercase tracking-wider">
+                  Submission Error
+                </p>
+                <p className="text-sm font-medium">{state.message}</p>
+              </div>
+            </div>
+          )}
 
-          {/* --- Footer Buttons --- */}
-          <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3">
-            <button
-              type="button"
-              className="px-8 py-3 rounded-full border border-slate-300 text-sm font-bold text-slate-500 hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-
-            {/* Action based Buttons */}
-            <button
-              name="status"
-              value="Draft"
-              className="px-8 py-3 rounded-full border border-blue-200 bg-blue-50 text-sm font-bold text-blue-500 hover:bg-blue-100"
-            >
-              Save as Draft
-            </button>
-
-            <button
-              name="status"
-              value="Published"
-              className="px-8 py-3 rounded-full bg-[#FF5722] text-sm font-bold text-white shadow-lg shadow-orange-100 hover:bg-[#E64A19] flex items-center justify-center gap-2"
-            >
-              <Check size={18} strokeWidth={3} />
-              Publish Notice
-            </button>
-          </div>
+          <FormButtons />
         </form>
-        {/* --- Success Modal Integration --- */}
-        {showSuccess && (
+
+        {/* PROPER MODAL LOGIC WITHOUT CASCADING RENDER */}
+        {state?.success && (
           <SuccessModal
-            noticeId={createdNoticeData.id}
-            noticeTitle={createdNoticeData.title}
-            onClose={() => setShowSuccess(false)}
+            noticeId={state._id || ""}
+            noticeTitle={state.title || "Notice Published"}
+            onClose={resetForm}
             resetForm={resetForm}
           />
         )}

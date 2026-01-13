@@ -1,4 +1,4 @@
-"use client";
+
 import { Bell, Menu } from "lucide-react";
 import Image from "next/image";
 import { today, getGreeting } from "@/app/utils/Helper";

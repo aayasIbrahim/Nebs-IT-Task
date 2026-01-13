@@ -29,43 +29,43 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
 
   const [activeItem, setActiveItem] = useState("Employee");
 
-  const navItems = [
-    { icon: <LayoutGrid size={20} />, label: "Dashboard", href: "/" },
-    {
-      icon: <UserCircle size={20} />,
-      label: "Employee",
-      hasSubmenu: true,
-      submenu: [
-        { label: "Employee Database", href: "/employee/database" },
-        { label: "Add New Employee", href: "/employee/add" },
-        { label: "Performance Report", href: "/employee/report" },
-        { label: "Performance History", href: "/employee/history" },
-      ],
-    },
-    {
-      icon: <ClipboardList size={20} />,
-      label: "Notice Board",
-      hasSubmenu: true,
-      submenu: [
-        { label: "Add Notice", href: "/addNotice" },
-        { label: "Notice Management", href: "/notice-board" },
-      ],
-    },
-    { icon: <Box size={20} />, label: "Payroll", href: "/payroll" },
-    { icon: <Share2 size={20} />, label: "Pay Slip" },
-    { icon: <Users size={20} />, label: "Attendance" },
-    { icon: <Layout size={20} />, label: "Request Center" },
-    {
-      icon: <BookOpen size={20} />,
-      label: "Career Database",
-      hasSubmenu: true,
-    },
-    { icon: <FileText size={20} />, label: "Document manager" },
-
-    { icon: <ScrollText size={20} />, label: "Activity Log" },
-    { icon: <LogOut size={20} />, label: "Exit Interview" },
-    { icon: <User size={20} />, label: "Profile" },
-  ];
+ const navItems = [
+  { icon: <LayoutGrid size={20} />, label: "Dashboard", href: "/" },
+  {
+    icon: <UserCircle size={20} />,
+    label: "Employee",
+    hasSubmenu: true,
+    submenu: [
+      { label: "Employee Database", href: "/employee/database" },
+      { label: "Add New Employee", href: "/employee/add" },
+      { label: "Performance Report", href: "/employee/report" },
+      { label: "Performance History", href: "/employee/history" },
+    ],
+  },
+  {
+    icon: <ClipboardList size={20} />,
+    label: "Notice Board",
+    hasSubmenu: true,
+    submenu: [
+      { label: "Add Notice", href: "/addNotice" },
+      { label: "Notice Management", href: "/notice-board" },
+    ],
+  },
+  { icon: <Box size={20} />, label: "Payroll", href: "/payroll" },
+  { icon: <Share2 size={20} />, label: "Pay Slip", href: "/payroll/pay-slip" }, // added href
+  { icon: <Users size={20} />, label: "Attendance", href: "/attendance" }, // added href
+  { icon: <Layout size={20} />, label: "Request Center", href: "/request-center" }, // added href
+  {
+    icon: <BookOpen size={20} />,
+    label: "Career Database",
+    hasSubmenu: true,
+    href: "/career-database", // added href
+  },
+  { icon: <FileText size={20} />, label: "Document manager", href: "/document-manager" }, // added href
+  { icon: <ScrollText size={20} />, label: "Activity Log", href: "/activity-log" }, // added href
+  { icon: <LogOut size={20} />, label: "Exit Interview", href: "/exit-interview" }, // added href
+  { icon: <User size={20} />, label: "Profile", href: "/profile" }, // added href
+];
 
   const handleItemClick = (label: string) => {
     setActiveItem(label);

@@ -1,22 +1,24 @@
 "use server";
 
 
+import { ActionState } from "../types/notice";
 import { revalidatePath } from "next/cache";
 
-export async function createNotice(formData: FormData) {
+export async function createNotice(prevState: ActionState, formData: FormData) {
   const apiFormData = new FormData();
 
-  // ডাটা ম্যাপ করা (ফ্রন্টএন্ডের 'title' কে ব্যাকএন্ডের 'noticeTitle' এ নেওয়া)
   apiFormData.append("noticeTitle", formData.get("noticeTitle") as string);
   apiFormData.append("targetDept", formData.get("targetDept") as string);
   apiFormData.append("employeeId", formData.get("employeeId") as string);
   apiFormData.append("employeeName", formData.get("employeeName") as string);
-  apiFormData.append("noticeDescription", formData.get("noticeDescription") as string);
+  apiFormData.append(
+    "noticeDescription",
+    formData.get("noticeDescription") as string
+  );
   apiFormData.append("position", formData.get("position") as string);
   apiFormData.append("publishDate", formData.get("publishDate") as string);
   apiFormData.append("status", formData.get("status") as string);
 
-  // নোটিশ টাইপ প্রসেস করা
   const noticeTypesRaw = formData.get("noticeTypes") as string;
   try {
     const typesArray: string[] = JSON.parse(noticeTypesRaw || "[]");
@@ -27,7 +29,6 @@ export async function createNotice(formData: FormData) {
     return { success: false, message: "Invalid notice type format" };
   }
 
-  // অ্যাটাচমেন্ট চেক
   const attachment = formData.get("attachment") as File;
   if (attachment && attachment.size > 0) {
     apiFormData.append("attachment", attachment);
@@ -46,21 +47,20 @@ export async function createNotice(formData: FormData) {
 
     if (!response.ok) {
       console.error("Backend error:", result);
-      return { 
-        success: false, 
-        message: result.message || "Notice creation failed" 
+      return {
+        success: false,
+        message: result.message || "Notice has not been created, bcz your provided data is invalid and missing required fields.",
       };
     }
 
-
     revalidatePath("/notice-board");
-    
-    return { 
-      success: true, 
-      _id: result.data?._id || result._id,
-      message: "Notice created successfully!" 
-    };
 
+    return {
+      success: true,
+      _id: result.data?._id || result._id,
+      title: formData.get("noticeTitle") as string,
+      message: "Notice created successfully!",
+    };
   } catch (error) {
     console.error("Fetch error:", error);
     return { success: false, message: "Server connection failed" };
@@ -94,11 +94,10 @@ export async function updateNoticeStatusOnly(
     console.error("Action Error details:", error);
     return { success: false, error: "Database connection failed" };
   }
-};
+}
 
 export async function updateNoticeAction(id: string, formData: FormData) {
   try {
-    
     const data = {
       noticeTitle: formData.get("noticeTitle"),
       noticeDescription: formData.get("noticeDescription"),
@@ -108,31 +107,29 @@ export async function updateNoticeAction(id: string, formData: FormData) {
       position: formData.get("position"),
       publishDate: formData.get("publishDate"),
       status: formData.get("status"),
-      noticeType: formData.getAll("noticeType"), 
+      noticeType: formData.getAll("noticeType"),
     };
 
-    const res = await fetch(`https://nebs-it-task.onrender.com/api/notices/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json", 
-      },
-      body: JSON.stringify(data), 
-    });
+    const res = await fetch(
+      `https://nebs-it-task.onrender.com/api/notices/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
 
-    
     if (!res.ok) {
-        // যদি এরর হয়, টেক্সট হিসেবে এরর মেসেজ পড়ার চেষ্টা করুন
-        const errorText = await res.text();
-        console.error("Server Error:", errorText);
-        return { success: false, error: "Server update failed" };
+      const errorText = await res.text();
+      console.error("Server Error:", errorText);
+      return { success: false, error: "Server update failed" };
     }
-
-
 
     revalidatePath("/notice-board");
     revalidatePath(`/notices/${id}`);
     return { success: true };
-    
   } catch (error) {
     console.error("Update Action Error:", error);
     return { success: false, error: "Connection error" };
