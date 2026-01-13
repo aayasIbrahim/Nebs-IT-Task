@@ -7,8 +7,8 @@ A modern, full-stack Notice Management System built with **Next.js 16 (App Route
 - **Backend API:** [https://nebs-it-task.onrender.com/]
 
 ## 🛠 Tech Stack
-- **Frontend:** Next.js 15, TypeScript, Tailwind CSS, Lucide React (Icons)
-- **State Management:** React `useActionState`, `useFormStatus`
+- **Frontend:** Next.js 16, TypeScript, Tailwind CSS, Lucide React (Icons)
+- **State Management:** React `useActionState`, `useFormStatus.`
 - **Backend API:** [ Node/Express] (Hosted on Render)
 - 
 
