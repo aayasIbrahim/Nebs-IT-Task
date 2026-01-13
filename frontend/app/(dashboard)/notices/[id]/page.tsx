@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 async function getNoticeDetails(id: string) {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`,
+      `https://nebs-it-task.onrender.com/api/notices/${id}`,
       { cache: "no-store" }
     );
     if (!res.ok) return null;

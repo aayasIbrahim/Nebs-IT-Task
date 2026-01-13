@@ -35,7 +35,7 @@ export async function createNotice(formData: FormData) {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/notices`,
+      `https://nebs-it-task.onrender.com/api/notices`,
       {
         method: "POST",
         body: apiFormData,
@@ -75,7 +75,7 @@ export async function updateNoticeStatusOnly(
     currentStatus === "Published" ? "Unpublished" : "Published";
 
   try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}/status`;
+    const apiUrl = `https://nebs-it-task.onrender.com/api/notices/${id}/status`;
 
     const res = await fetch(apiUrl, {
       method: "PATCH",
@@ -98,8 +98,8 @@ export async function updateNoticeStatusOnly(
 
 export async function updateNoticeAction(id: string, formData: FormData) {
   try {
-    // নোট: আমরা এখানে JSON.stringify করছি না, কারণ ফর্মে ফাইল থাকতে পারে
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`, {
+    
+    const res = await fetch(`https://nebs-it-task.onrender.com/api/notices/${id}`, {
       method: "PUT",
       // FormData পাঠালে "Content-Type" হেডার দেওয়ার দরকার নেই, ব্রাউজার নিজে থেকেই তা করে নেয়
       body: formData, 
@@ -123,7 +123,7 @@ export async function updateNoticeAction(id: string, formData: FormData) {
 export async function deleteNotice(id: string) {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`,
+      `https://nebs-it-task.onrender.com/api/notices/${id}`,
       {
         method: "DELETE",
       }

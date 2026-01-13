@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import EditNoticeForm from "@/components/notice/EditNoticeForm"; 
 
 async function getNotice(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`, {
+  const res = await fetch(`https://nebs-it-task.onrender.com/api/notices/${id}`, {
     cache: "no-store",
   });
   if (!res.ok) return null;

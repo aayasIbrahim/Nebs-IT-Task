@@ -26,7 +26,7 @@ async function getNotices(params: FilterParams = {}) {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/notices?${query.toString()}`,
+      `https://nebs-it-task.onrender.com/api/notices?${query.toString()}`,
       {
         next: { tags: ["notice-board"] },
         cache: "no-store",
