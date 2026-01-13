@@ -23,5 +23,5 @@ A modern, full-stack Notice Management System built with **Next.js 16 (App Route
 
 1. **Clone the repository:**
    ```bash
-   git clone [(https://github.com/aayasIbrahim/Nebs-IT-Task)]
+   git clone https://github.com/aayasIbrahim/Nebs-IT-Task
    cd Nebs-IT-Task
