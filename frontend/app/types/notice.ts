@@ -32,3 +32,18 @@ export interface FilterParams {
   date?: string;
   page?: string;
 }
+export interface StatusBadgeProps {
+  notice: Notice;
+  onClick: () => void;
+}
+ export interface StatusTogglePopupProps {
+  notice: Notice;
+  onToggle: () => void;
+  isMobile?: boolean;
+}
+ export interface SuccessModalProps {
+  noticeId: string;
+  noticeTitle: string;
+  onClose: () => void;
+  resetForm: () => void;
+}

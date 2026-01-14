@@ -106,7 +106,7 @@ export async function updateNoticeAction(id: string, formData: FormData) {
       employeeName: formData.get("employeeName"),
       position: formData.get("position"),
       publishDate: formData.get("publishDate"),
-      status: formData.get("status"),
+     status: formData.get("status") as string,
       noticeType: formData.getAll("noticeType"),
     };
 

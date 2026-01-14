@@ -1,13 +1,7 @@
 // components/notice/StatusBadge.tsx
 "use client";
 
-import { Notice } from "@/app/types/notice";
-
-interface StatusBadgeProps {
-  notice: Notice;
-  onClick: () => void;
-}
-
+import { StatusBadgeProps } from "@/app/types/notice";
 export default function StatusBadge({ notice, onClick }: StatusBadgeProps) {
   return (
     <button
