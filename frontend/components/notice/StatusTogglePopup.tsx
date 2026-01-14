@@ -1,13 +1,8 @@
 
 "use client";
 
-import { Notice } from "@/app/types/notice";
+import { StatusTogglePopupProps } from "@/app/types/notice";
 
-interface StatusTogglePopupProps {
-  notice: Notice;
-  onToggle: () => void;
-  isMobile?: boolean;
-}
 
 export default function StatusTogglePopup({
   notice,

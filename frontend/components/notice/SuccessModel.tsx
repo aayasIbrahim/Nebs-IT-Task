@@ -1,14 +1,10 @@
 "use client";
+import { SuccessModalProps } from "@/app/types/notice";
 
 import { Check, Plus, Eye, X } from "lucide-react";
 import Link from "next/link";
 
-interface SuccessModalProps {
-  noticeId: string;
-  noticeTitle: string;
-  onClose: () => void;
-  resetForm: () => void;
-}
+
 
 export default function SuccessModal({ noticeId, noticeTitle, onClose, resetForm }: SuccessModalProps) {
   return (
