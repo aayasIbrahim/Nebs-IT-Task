@@ -18,7 +18,7 @@ import {
 async function getNoticeDetails(id: string) {
   try {
     const res = await fetch(
-      `https://nebs-it-task.onrender.com/api/notices/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`,
       { cache: "no-store" }
     );
     if (!res.ok) return null;

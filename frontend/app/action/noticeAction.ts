@@ -36,7 +36,7 @@ export async function createNotice(prevState: ActionState, formData: FormData) {
 
   try {
     const response = await fetch(
-      `https://nebs-it-task.onrender.com/api/notices`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/notices`,
       {
         method: "POST",
         body: apiFormData,
@@ -75,7 +75,7 @@ export async function updateNoticeStatusOnly(
     currentStatus === "Published" ? "Unpublished" : "Published";
 
   try {
-    const apiUrl = `https://nebs-it-task.onrender.com/api/notices/${id}/status`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}/status`;
 
     const res = await fetch(apiUrl, {
       method: "PATCH",
@@ -111,7 +111,7 @@ export async function updateNoticeAction(id: string, formData: FormData) {
     };
 
     const res = await fetch(
-      `https://nebs-it-task.onrender.com/api/notices/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`,
       {
         method: "PUT",
         headers: {
@@ -139,7 +139,7 @@ export async function updateNoticeAction(id: string, formData: FormData) {
 export async function deleteNotice(id: string) {
   try {
     const res = await fetch(
-      `https://nebs-it-task.onrender.com/api/notices/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/notices/${id}`,
       {
         method: "DELETE",
       }
