@@ -1,4 +1,4 @@
-# Notice Management System (NEBS IT Task)
+# Notice Management System 
 
 A modern, full-stack Notice Management System built with **Next.js 16 (App Router)**. This project allows administrators to create, manage, and publish notices for employees across different departments.
 
